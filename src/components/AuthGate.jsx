@@ -25,13 +25,11 @@ function ClerkGate({ children }) {
         {isSignedIn ? (
           children
         ) : (
-          <div className="min-h-screen bg-white flex items-center justify-center px-4">
-            <div className="w-full max-w-md text-center">
-              <img src="/rhl-logo.png" alt="RICH Home Loans" className="h-10 mx-auto mb-6" />
+          <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
+              <img src="/rhl-logo.png" alt="RICH Home Loans" className="h-10 mb-6" />
               <h1 className="text-3xl font-bold tracking-tight mb-2">Loan Dashboard</h1>
               <p className="text-gray-500 mb-8">Sign in to access your loan comparison</p>
               <SignIn routing="hash" />
-            </div>
           </div>
         )}
       </ClerkLoaded>
