@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "prompt",
+        "prompt": "Before finishing, update the following files to reflect this session's work:\n1. CLAUDE.md — Update any sections that changed: new components, modified architecture, configuration changes, or important notes discovered during this session.\n2. docs/session-notes.md — Append a new entry at the top of the Session History section with today's date and: summary of work completed, key decisions made and rationale, files created or modified, any issues encountered and how they were resolved, next steps or open items.\nKeep entries concise but thorough. Do NOT remove previous session entries."
+      }
+    ]
+  }
+}
