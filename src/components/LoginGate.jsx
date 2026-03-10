@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, Home, AlertCircle } from 'lucide-react';
+import { Lock, AlertCircle } from 'lucide-react';
 import { BORROWER } from '../data';
 
 async function hashZip(zip) {
@@ -36,12 +36,7 @@ export default function LoginGate({ onSuccess }) {
       <div className="w-full max-w-md">
         {/* Brand */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 mb-6">
-            <Home className="h-8 w-8 text-[#cc0000]" aria-hidden="true" />
-            <span className="text-2xl font-bold">
-              <span className="text-[#cc0000]">RICH</span> Home Loans
-            </span>
-          </div>
+          <img src="/rhl-logo.png" alt="RICH Home Loans" className="h-10 mx-auto mb-4" />
           <h1 className="text-3xl font-bold tracking-tight mb-2">Loan Dashboard</h1>
           <p className="text-gray-500">Enter the property zip code to access your loan comparison</p>
         </div>
