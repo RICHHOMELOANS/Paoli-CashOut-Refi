@@ -2,14 +2,27 @@ import { useState } from 'react';
 import { Lock, Home, AlertCircle } from 'lucide-react';
 import { BORROWER } from '../data';
 
+async function hashZip(zip) {
+  const data = new TextEncoder().encode(zip);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 export default function LoginGate({ onSuccess }) {
   const [zip, setZip] = useState('');
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
+  const [checking, setChecking] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (zip.trim() === BORROWER.zip) {
+    setChecking(true);
+    const hash = await hashZip(zip.trim());
+    setChecking(false);
+
+    if (hash === BORROWER.zipHash) {
       onSuccess();
     } else {
       setError(true);
@@ -24,7 +37,7 @@ export default function LoginGate({ onSuccess }) {
         {/* Brand */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 mb-6">
-            <Home className="h-8 w-8 text-[#cc0000]" />
+            <Home className="h-8 w-8 text-[#cc0000]" aria-hidden="true" />
             <span className="text-2xl font-bold">
               <span className="text-[#cc0000]">RICH</span> Home Loans
             </span>
@@ -37,7 +50,7 @@ export default function LoginGate({ onSuccess }) {
         <div className={`rounded-xl border shadow-sm p-8 ${shake ? 'animate-shake' : ''}`}>
           <div className="flex items-center gap-3 mb-6">
             <div className="h-10 w-10 rounded-lg bg-[#cc0000]/10 flex items-center justify-center">
-              <Lock className="h-5 w-5 text-[#cc0000]" />
+              <Lock className="h-5 w-5 text-[#cc0000]" aria-hidden="true" />
             </div>
             <div>
               <p className="font-semibold">Secure Access</p>
@@ -77,9 +90,10 @@ export default function LoginGate({ onSuccess }) {
             )}
             <button
               type="submit"
-              className="w-full mt-6 h-12 bg-[#cc0000] text-white font-semibold rounded-lg hover:bg-[#cc0000]/90 transition-colors cursor-pointer"
+              disabled={checking}
+              className="w-full mt-6 h-12 bg-[#cc0000] text-white font-semibold rounded-lg hover:bg-[#cc0000]/90 transition-colors cursor-pointer disabled:opacity-60"
             >
-              Access Dashboard
+              {checking ? 'Verifying...' : 'Access Dashboard'}
             </button>
           </form>
         </div>

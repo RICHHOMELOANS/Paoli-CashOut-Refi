@@ -6,7 +6,7 @@
 export const BORROWER = {
   names: 'Michael & Amanda Paoli',
   property: '13240 Falmouth St, Leawood KS 66209',
-  zip: '66209',
+  zipHash: '0935c1f8f368d4005ec4f614bc67c759e4ad7c698e8e7ad500f4920ff6eb3048',
   loanType: 'Conventional 30-Year Fixed Cash-Out Refi',
   rate: 6.125,
   apr: 6.14,
