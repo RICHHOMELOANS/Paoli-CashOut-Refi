@@ -1,34 +1,42 @@
 import { useState } from 'react';
-import { useUser, SignIn } from '@clerk/react';
+import {
+  useAuth,
+  SignIn,
+  ClerkLoading,
+  ClerkLoaded,
+  UserButton,
+} from '@clerk/react';
 import LoginGate from './LoginGate';
 
 const HAS_CLERK = !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 function ClerkGate({ children }) {
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn } = useAuth();
 
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-gray-400">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!isSignedIn) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
-        <div className="w-full max-w-md text-center">
-          <img src="/rhl-logo.png" alt="RICH Home Loans" className="h-10 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Loan Dashboard</h1>
-          <p className="text-gray-500 mb-8">Sign in to access your loan comparison</p>
-          <SignIn routing="hash" />
+  return (
+    <>
+      <ClerkLoading>
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-gray-400 animate-pulse">Loading...</div>
         </div>
-      </div>
-    );
-  }
+      </ClerkLoading>
 
-  return children;
+      <ClerkLoaded>
+        {isSignedIn ? (
+          children
+        ) : (
+          <div className="min-h-screen bg-white flex items-center justify-center px-4">
+            <div className="w-full max-w-md text-center">
+              <img src="/rhl-logo.png" alt="RICH Home Loans" className="h-10 mx-auto mb-6" />
+              <h1 className="text-3xl font-bold tracking-tight mb-2">Loan Dashboard</h1>
+              <p className="text-gray-500 mb-8">Sign in to access your loan comparison</p>
+              <SignIn routing="hash" />
+            </div>
+          </div>
+        )}
+      </ClerkLoaded>
+    </>
+  );
 }
 
 function ZipGate({ children }) {
@@ -47,3 +55,5 @@ export default function AuthGate({ children }) {
   }
   return <ZipGate>{children}</ZipGate>;
 }
+
+export { UserButton, HAS_CLERK };

@@ -1,5 +1,6 @@
 import { Calendar, Percent, Building2, BadgeCheck } from 'lucide-react';
 import { BORROWER } from '../data';
+import { UserButton, HAS_CLERK } from './AuthGate';
 
 export default function Hero() {
   return (
@@ -8,13 +9,16 @@ export default function Hero() {
       <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-[#cc0000]/5" />
 
       <div className="relative max-w-6xl mx-auto px-4 py-10">
-        {/* Top bar: logo + badge */}
+        {/* Top bar: logo + user/badge */}
         <div className="flex items-center justify-between mb-8">
           <img src="/rhl-logo.png" alt="RICH Home Loans" className="h-10" />
-          <span className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm bg-[#cc0000]/5 text-[#cc0000] font-medium">
-            <BadgeCheck className="h-4 w-4" aria-hidden="true" />
-            FREE &amp; CLEAR
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-sm bg-[#cc0000]/5 text-[#cc0000] font-medium">
+              <BadgeCheck className="h-4 w-4" aria-hidden="true" />
+              FREE &amp; CLEAR
+            </span>
+            {HAS_CLERK && <UserButton afterSignOutUrl="/" />}
+          </div>
         </div>
 
         {/* Main hero content */}
