@@ -1,48 +1,73 @@
-import { ESCROW } from '../data';
-
-const dollar = (n) => '$' + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const dollarRound = (n) => '$' + n.toLocaleString();
+import { Shield, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
+import { ESCROW, ESCROW_PROJECTION } from '../data';
+import { dollar, dollarWhole } from '../utils';
+import { Card, Row, Divider } from './Card';
 
 export default function EscrowBreakdown() {
+  const [showProjection, setShowProjection] = useState(false);
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
-      <h2 className="text-lg font-bold text-[#1F4E79] mb-4">Escrow Detail</h2>
-      <div className="space-y-3 text-sm">
-        <Section title="Homeowner's Insurance" carrier={ESCROW.hoiCarrier}>
-          <Row label="Annual Premium" value={dollar(ESCROW.hoiAnnual)} />
-          <Row label="Monthly Escrow" value={dollar(ESCROW.hoiMonthly)} />
-          <Row label="Renewal" value={ESCROW.hoiRenewal} />
-        </Section>
-        <Section title="Property Taxes" carrier={ESCROW.taxCounty}>
-          <Row label="Annual" value={dollar(ESCROW.taxAnnual)} />
-          <Row label="Monthly Escrow" value={dollar(ESCROW.taxMonthly)} />
-        </Section>
-        <div className="border-t pt-3 space-y-2">
-          <Row label="Total Monthly Escrow" value={dollar(ESCROW.totalMonthly)} bold />
-          <Row label="Initial Escrow Deposit" value={dollarRound(ESCROW.initialDeposit)} />
-          <Row label="Aggregate Adj. Credit" value={`(${dollarRound(ESCROW.aggAdjCredit)})`} green />
+    <Card title="Escrow Detail" icon={Shield}>
+      {/* HOI */}
+      <p className="text-xs font-semibold text-[#cc0000] uppercase tracking-wide mb-1">
+        Homeowner's Insurance — {ESCROW.hoiCarrier}
+      </p>
+      <Row label="Annual Premium" value={dollar(ESCROW.hoiAnnual)} />
+      <Row label="Monthly Escrow" value={dollar(ESCROW.hoiMonthly)} />
+      <Row label={`Policy ${ESCROW.hoiPolicy}`} value={`Renewal ${ESCROW.hoiRenewal}`} />
+
+      <div className="my-3" />
+
+      {/* Tax */}
+      <p className="text-xs font-semibold text-[#cc0000] uppercase tracking-wide mb-1">
+        Property Taxes — {ESCROW.taxCounty}
+      </p>
+      <Row label="Annual Tax" value={dollar(ESCROW.taxAnnual)} />
+      <Row label="Monthly Escrow" value={dollar(ESCROW.taxMonthly)} />
+
+      <Divider />
+      <Row label="Total Monthly Escrow" value={dollar(ESCROW.totalMonthly)} bold />
+      <Row label="Initial Escrow Deposit" value={dollar(ESCROW.initialDeposit)} />
+      <Row label="Aggregate Adj. Credit" value={`(${dollar(ESCROW.aggAdjCredit)})`} accent />
+
+      {/* 12-month projection toggle */}
+      <button
+        onClick={() => setShowProjection(!showProjection)}
+        className="mt-4 w-full flex items-center justify-center gap-1 text-sm text-[#cc0000] hover:text-[#cc0000]/80 cursor-pointer"
+      >
+        {showProjection ? 'Hide' : 'Show'} 12-Month Projection
+        {showProjection ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </button>
+
+      {showProjection && (
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-gray-500 border-b">
+                <th className="text-left pb-1">Month</th>
+                <th className="text-right pb-1">Open</th>
+                <th className="text-right pb-1">+Collect</th>
+                <th className="text-right pb-1">-Disburse</th>
+                <th className="text-right pb-1">Close</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ESCROW_PROJECTION.map((r) => (
+                <tr key={r.month} className="border-b last:border-0">
+                  <td className="py-1 font-medium">{r.month}</td>
+                  <td className="py-1 text-right tabular-nums">{dollarWhole(r.open)}</td>
+                  <td className="py-1 text-right tabular-nums text-green-700">{dollarWhole(r.collect)}</td>
+                  <td className="py-1 text-right tabular-nums text-red-600">
+                    {r.disburse > 0 ? `(${dollarWhole(r.disburse)})` : '—'}
+                  </td>
+                  <td className="py-1 text-right tabular-nums font-medium">{dollarWhole(r.close)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function Section({ title, carrier, children }) {
-  return (
-    <div className="space-y-1">
-      <h3 className="font-semibold text-[#1F4E79]">
-        {title} <span className="text-gray-400 font-normal">— {carrier}</span>
-      </h3>
-      {children}
-    </div>
-  );
-}
-
-function Row({ label, value, bold, green }) {
-  return (
-    <div className={`flex justify-between ${bold ? 'font-bold' : ''} ${green ? 'text-green-700' : 'text-gray-700'}`}>
-      <span>{label}</span>
-      <span>{value}</span>
-    </div>
+      )}
+    </Card>
   );
 }

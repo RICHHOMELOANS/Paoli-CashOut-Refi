@@ -1,37 +1,34 @@
-import { PAYOFFS, PAYOFFS_TOTAL, PAYOFF_DEBTS_PAYMENT } from '../data';
-
-const dollar = (n) => '$' + n.toLocaleString();
+import { CreditCard, ArrowDownCircle } from 'lucide-react';
+import { PAYOFFS, PAYOFFS_TOTAL, PAYOFF_PAYMENT_RELIEF } from '../data';
+import { dollarWhole } from '../utils';
+import { Card, Row, Divider } from './Card';
 
 export default function PayoffToggle({ enabled, onToggle }) {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
-      <h2 className="text-lg font-bold text-[#1F4E79] mb-4">JPMCB Payoff at Closing</h2>
+    <Card title="JPMCB Payoff at Closing" icon={CreditCard}>
       <button
         onClick={onToggle}
-        className={`w-full py-3 rounded-lg font-bold text-lg transition-all cursor-pointer ${
+        className={`w-full py-3 rounded-lg font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 ${
           enabled
-            ? 'bg-[#C6EFCE] text-green-900 border-2 border-green-600'
-            : 'bg-gray-100 text-gray-600 border-2 border-gray-300 hover:border-gray-400'
+            ? 'bg-green-50 text-green-800 border-2 border-green-400'
+            : 'bg-gray-50 text-gray-500 border-2 border-gray-200 hover:border-gray-400'
         }`}
       >
-        {enabled ? '✓ Payoffs ON' : 'Payoffs OFF'}
+        <ArrowDownCircle className={`h-5 w-5 ${enabled ? 'text-green-600' : 'text-gray-400'}`} />
+        {enabled ? 'Payoffs ON — deducted from proceeds' : 'Payoffs OFF — click to enable'}
       </button>
-      <div className="mt-4 space-y-2 text-sm">
+
+      <div className="mt-4 space-y-1">
         {PAYOFFS.map((p) => (
-          <div key={p.creditor} className="flex justify-between text-gray-700">
-            <span>{p.creditor}</span>
-            <span>{dollar(p.balance)}</span>
-          </div>
+          <Row key={p.creditor} label={p.creditor} value={dollarWhole(p.balance)} />
         ))}
-        <div className="flex justify-between font-bold border-t pt-2">
-          <span>Total Payoff</span>
-          <span>{dollar(PAYOFFS_TOTAL)}</span>
-        </div>
-        <div className="flex justify-between text-green-700 text-xs">
-          <span>Monthly debt reduction</span>
-          <span>-{dollar(PAYOFF_DEBTS_PAYMENT)}/mo</span>
+        <Divider />
+        <Row label="Total Payoff" value={dollarWhole(PAYOFFS_TOTAL)} bold />
+        <div className="flex justify-between text-sm text-green-700 mt-1">
+          <span>Monthly debt relief</span>
+          <span className="tabular-nums">-{dollarWhole(PAYOFF_PAYMENT_RELIEF)}/mo</span>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

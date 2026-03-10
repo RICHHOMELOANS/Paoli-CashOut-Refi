@@ -1,48 +1,59 @@
-import { DTI } from '../data';
+import { BarChart3 } from 'lucide-react';
+import { SCENARIOS } from '../data';
+import { Card } from './Card';
 
 const THRESHOLD = 45;
 
+const BARS = [
+  { key: 'dtiAllDebts', label: 'All Debts', sublabel: 'No payoffs', color: 'bg-red-400' },
+  { key: 'dtiPayoff', label: 'JPMCB Paid', sublabel: 'At closing', color: 'bg-[#cc0000]' },
+  { key: 'dtiRsu', label: 'With RSU', sublabel: 'Reference', color: 'bg-green-500' },
+];
+
 export default function DtiDashboard({ selectedIndex }) {
-  const scenarios = [
-    { label: 'No Payoffs', values: DTI.scenario1, color: 'bg-red-400' },
-    { label: 'JPMCB Paid', values: DTI.scenario2, color: 'bg-[#1F4E79]' },
-    { label: 'With RSU', values: DTI.scenario3, color: 'bg-green-500' },
-  ];
+  const s = SCENARIOS[selectedIndex];
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
-      <h2 className="text-lg font-bold text-[#1F4E79] mb-4">DTI Comparison</h2>
-      <div className="text-xs text-gray-500 mb-1">Conv max 45% &middot; 50% w/ DU Approve + comp factors</div>
-      <div className="relative">
-        {/* Threshold line */}
+    <Card title="Back-End DTI Comparison" icon={BarChart3}>
+      <p className="text-xs text-gray-400 mb-4">
+        Conv max 45% · 50% w/ DU Approve + compensating factors
+      </p>
+
+      <div className="relative" role="img" aria-label={`DTI ratios: All Debts ${s.dtiAllDebts}%, JPMCB Paid ${s.dtiPayoff}%, With RSU ${s.dtiRsu}%. Conventional limit is 45%.`}>
+        {/* 45% threshold */}
         <div
-          className="absolute border-t-2 border-dashed border-red-400 w-full z-10"
-          style={{ bottom: `${THRESHOLD}%` }}
+          className="absolute border-t-2 border-dashed border-red-300 w-full z-10 pointer-events-none"
+          style={{ bottom: `${(THRESHOLD / 55) * 100}%` }}
         >
-          <span className="absolute -top-4 right-0 text-xs text-red-500 font-bold">{THRESHOLD}%</span>
+          <span className="absolute -top-5 right-0 text-xs text-red-400 font-bold">
+            {THRESHOLD}% limit
+          </span>
         </div>
 
-        <div className="flex items-end gap-4 h-48 pt-6">
-          {scenarios.map((sc) => {
-            const val = sc.values[selectedIndex];
-            const overLimit = val > THRESHOLD;
+        <div className="flex items-end gap-6 h-52">
+          {BARS.map(({ key, label, sublabel, color }) => {
+            const val = s[key];
+            const over = val > THRESHOLD;
             return (
-              <div key={sc.label} className="flex-1 flex flex-col items-center">
-                <span className={`text-sm font-bold mb-1 ${overLimit ? 'text-red-500' : 'text-gray-700'}`}>
-                  {val}%{overLimit ? ' ⚠' : ' ✓'}
+              <div key={key} className="flex-1 flex flex-col items-center">
+                <span className={`text-sm font-bold mb-1 ${over ? 'text-red-500' : 'text-gray-700'}`}>
+                  {val.toFixed(1)}%
                 </span>
-                <div className="w-full bg-gray-100 rounded-t-md relative" style={{ height: '100%' }}>
+                <div className="w-full bg-gray-100 rounded-t-lg relative h-full">
                   <div
-                    className={`${sc.color} rounded-t-md absolute bottom-0 w-full transition-all duration-500`}
-                    style={{ height: `${val}%` }}
+                    className={`${color} rounded-t-lg absolute bottom-0 w-full transition-all duration-500 ease-out`}
+                    style={{ height: `${(val / 55) * 100}%` }}
                   />
                 </div>
-                <span className="text-xs mt-2 text-gray-600 text-center">{sc.label}</span>
+                <div className="text-center mt-2">
+                  <p className="text-xs font-medium">{label}</p>
+                  <p className="text-[10px] text-gray-400">{sublabel}</p>
+                </div>
               </div>
             );
           })}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
