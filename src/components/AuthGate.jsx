@@ -48,6 +48,9 @@ function ZipGate({ children }) {
 }
 
 export default function AuthGate({ children }) {
+  if (import.meta.env.VITE_SKIP_AUTH === 'true') {
+    return children;
+  }
   if (HAS_CLERK) {
     return <ClerkGate>{children}</ClerkGate>;
   }

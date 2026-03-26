@@ -63,3 +63,18 @@ Upgraded authentication from zip code gate to Clerk free tier, performed a full 
 - Enable Clerk Allowlist to restrict sign-ups to approved emails
 - Consider adding print/PDF export for the loan comparison
 - Consider adding Fannie Mae guideline citations as tooltips on DTI thresholds
+
+---
+
+## 2026-03-26 — Auth Bypass for Local Development
+
+### Summary
+Added a `VITE_SKIP_AUTH` environment variable to bypass both Clerk and zip code authentication during local development.
+
+### Key Decisions
+- **Skip-auth flag**: When `VITE_SKIP_AUTH=true` is set, `AuthGate` renders children directly — no Clerk sign-in, no zip code prompt. Production is unaffected since the env var is not set in Vercel.
+- **`.env.local`**: Created with `VITE_SKIP_AUTH=true` for persistent local dev bypass. Gitignored by Vite convention.
+
+### Files Created/Modified
+- **Created**: `.env.local` (local-only, gitignored)
+- **Modified**: `src/components/AuthGate.jsx` (added `VITE_SKIP_AUTH` check before Clerk/zip gates)
